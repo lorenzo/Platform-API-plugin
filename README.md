@@ -32,12 +32,12 @@ The plugin also handles redirects in a more API friendly way
 
 There is baked in default views for the following actions
 
-# index
-# add
-# edit
-# delete
-# view
-# redirect
+* index
+* add
+* edit
+* delete
+* view
+* redirect
 
 If will fall back to these default views if it cannot find your own custom API views
 
