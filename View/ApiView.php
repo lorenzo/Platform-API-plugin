@@ -13,6 +13,21 @@ class ApiView extends View {
     }
 
     protected function _getViewFileName($name = null) {
+        // Handle Exceptions genericly for now
+        if ($this->viewPath === 'Errors') {
+            $this->layoutPath = 'json';
+
+            $old_plugin = $this->plugin;
+            $this->plugin = 'Api';
+
+            $file = parent::_getViewFileName('/' . $this->apiFormat . DS . 'exception');
+
+            $this->plugin = $old_plugin;
+            unset($old_plugin);
+
+            return $file;
+        }
+
         // try to find it with default
         try {
             return parent::_getViewFileName($name);
@@ -35,7 +50,6 @@ class ApiView extends View {
             // Reset plugin
             $this->plugin = $old_plugin;
             unset($old_plugin);
-
             return $file;
         }
 
