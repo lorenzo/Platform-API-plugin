@@ -53,11 +53,6 @@ class ApiComponent extends Component {
         // Read out the API token
         $this->configureApiToken();
 
-        // Don't enforce API access check if the request is public
-        if (in_array($this->action, $this->controller->publicActions) || $this->hasError()) {
-            return;
-        }
-
         // Enforce API authentication
         $this->configureApiAccess();
     }
@@ -110,6 +105,16 @@ class ApiComponent extends Component {
             return;
         }
 
+        // Don't enforce API access check if the request is public
+        if ($this->hasError()) {
+            return;
+        }
+
+        // If its a public action, do not enforce API security checks
+        if (in_array($this->controller->action, $this->controller->publicActions)) {
+            return;
+        }
+
         // Do not enforce authentication if the request is already authenticated
         if ($this->controller->Auth->user()) {
             return;
@@ -117,12 +122,12 @@ class ApiComponent extends Component {
 
         // Deny access if no AccessToken is provided
         if (!Configure::read('Platform.AccessToken')) {
-            throw new ForbiddenException('Permission denied');
+            throw new ForbiddenException('Permission denied, missing access token');
         }
 
         // Deny access if the AccessToken isn't valid
         if (!$this->controller->Auth->login()) {
-            throw new ForbiddenException('Permission denied');
+            throw new ForbiddenException('Permission denied, invalid access token');
         }
     }
 
