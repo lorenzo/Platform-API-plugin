@@ -1,11 +1,12 @@
 <?php
 class ApiView extends View {
+
 	protected $apiFormat;
 
 	public function __construct($controller) {
 		parent::__construct($controller);
 
-		if ($this->request->is('json')) {
+			if ($this->request->is('json')) {
 			$this->apiFormat = 'json';
 		} else {
 			throw new Exception('Unknown API request format');
@@ -13,6 +14,8 @@ class ApiView extends View {
 	}
 
 	protected function _getViewFileName($name = null) {
+		$originalViewPath = $this->viewPath;
+
 		// Handle Exceptions genericly for now
 		if ($this->viewPath === 'Errors') {
 			$this->layoutPath = 'json';
@@ -28,9 +31,26 @@ class ApiView extends View {
 			return $file;
 		}
 
-		// try to find it with default
+		/*
+		* Try to find it with default
+		* views/:controller/:action
+		*/
 		try {
 			return parent::_getViewFileName($name);
+		} catch (MissingViewException $e) { }
+
+		/*
+		* /views/:apiFormat/:action
+		*/
+		try {
+			return parent::_getViewFileName('/' . $this->apiFormat . '/' . $name);
+		} catch (MissingViewException $e) { }
+
+		/**
+		* /views/api/:action
+		*/
+		try {
+			return parent::_getViewFileName('/api/' . $name);
 		} catch (MissingViewException $e) { }
 
 		// Try default api views
@@ -54,7 +74,7 @@ class ApiView extends View {
 		}
 
 		// Finally try default api view
-		$file = parent::_getViewFileName('/' . $this->apiFormat . '/default');
+		$file = parent::_getViewFileName('/' . $this->apiFormat . '/' . $name);
 		$this->plugin = $old_plugin;
 		unset($old_plugin);
 		return $file;
