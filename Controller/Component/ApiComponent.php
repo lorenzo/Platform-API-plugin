@@ -6,7 +6,6 @@
  *
  * @see https://wiki.ournodes.com/display/platform/Api+Plugin
  * @see http://book.cakephp.org/2.0/en/controllers/components.html#Component
- * @author Christian Winther <cw@nodes.dk>
  * @copyright Nodes ApS, 2011
  */
 class ApiComponent extends Component {
