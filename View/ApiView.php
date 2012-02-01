@@ -6,7 +6,7 @@ class ApiView extends View {
 	public function __construct($controller) {
 		parent::__construct($controller);
 
-			if ($this->request->is('json')) {
+		if ($this->request->is('json')) {
 			$this->apiFormat = 'json';
 		} else {
 			throw new Exception('Unknown API request format');

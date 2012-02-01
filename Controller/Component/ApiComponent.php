@@ -37,7 +37,9 @@ class ApiComponent extends Component {
 		$this->response		= $Controller->response;
 
 		Configure::write('ResponseObject', $this->response);
+	}
 
+	public function startup(Controller $controller) {
 		// Ensure we can detect API requests
 		$this->configureRequestDetectors();
 
