@@ -13,70 +13,42 @@ class ApiView extends View {
 		}
 	}
 
-	protected function _getViewFileName($name = null) {
-		$originalViewPath = $this->viewPath;
-
-		// Handle Exceptions genericly for now
-		if ($this->viewPath === 'Errors') {
-			$this->layoutPath = 'json';
-
-			$old_plugin = $this->plugin;
-			$this->plugin = 'Api';
-
-			$file = parent::_getViewFileName('/' . $this->apiFormat . DS . 'exception');
-
-			$this->plugin = $old_plugin;
-			unset($old_plugin);
-
-			return $file;
+	protected function _paths($plugin = null, $cached = true) {
+		if ($plugin === null && $cached === true && !empty($this->_paths)) {
+			return $this->_paths;
 		}
 
-		/*
-		* Try to find it with default
-		* views/:controller/:action
-		*/
+		$paths = parent::_paths($plugin, $cached);
+		$paths[] = App::pluginPath('Api') . 'View' . DS;
+
+		return $this->_paths = $paths;
+	}
+
+
+	protected function _getViewFileName($name = null) {
+		$name = $name ?: $this->view;
+
+		// Search relative path for the api format (json / xml)
 		try {
-			return parent::_getViewFileName($name);
+			return parent::_getViewFileName($this->apiFormat . DS . $name);
 		} catch (MissingViewException $e) { }
 
-		/*
-		* /views/:apiFormat/:action
-		*/
+		// Search relative path
 		try {
-			return parent::_getViewFileName('/' . $this->apiFormat . '/' . $name);
+			return parent::_getViewFileName('api/' . $name);
 		} catch (MissingViewException $e) { }
 
-		/**
-		* /views/api/:action
-		*/
+		// Search aboslute path for the api format (json / xml)
+		try {
+			return parent::_getViewFileName(DS . $this->apiFormat . DS . $name);
+		} catch (MissingViewException $e) { }
+
+		// Search aboslute path
 		try {
 			return parent::_getViewFileName('/api/' . $name);
 		} catch (MissingViewException $e) { }
 
-		// Try default api views
-		try {
-			$this->viewPath = str_replace($this->apiFormat, 'api', $this->viewPath);
-			return parent::_getViewFileName($name);
-		} catch (MissingViewException $e) { }
-
-		// Try default api action view
-		$old_plugin = $this->plugin;
-		$this->plugin = 'Api';
-		try {
-			$file = parent::_getViewFileName('/' . $this->apiFormat . '/' . $this->view);
-		} catch (MissingViewException $e) { }
-
-		if (!empty($file)) {
-			// Reset plugin
-			$this->plugin = $old_plugin;
-			unset($old_plugin);
-			return $file;
-		}
-
-		// Finally try default api view
-		$file = parent::_getViewFileName('/' . $this->apiFormat . '/' . $name);
-		$this->plugin = $old_plugin;
-		unset($old_plugin);
-		return $file;
+		// Default to the normal view if everything else fails
+		return parent::_getViewFileName($name);
 	}
 }

@@ -36,17 +36,22 @@ class ApiComponent extends Component {
 		$this->request		= $Controller->request;
 		$this->response		= $Controller->response;
 
-		Configure::write('ResponseObject', $this->response);
+		// Ensure we can detect API requests
+		$this->configureRequestDetectors();
+		$this->setup();
 	}
 
 	public function startup(Controller $controller) {
-		// Ensure we can detect API requests
-		$this->configureRequestDetectors();
+		$this->setup();
+	}
 
+	protected function setup() {
 		// Don't do additional work if its'n not an API request
 		if (!$this->request->is('api')) {
 			return;
 		}
+		
+		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
 		$this->controller->viewClass = 'Api.Api';
