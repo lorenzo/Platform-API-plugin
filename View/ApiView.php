@@ -30,12 +30,22 @@ class ApiView extends View {
 
 		// Search relative path for the api format (json / xml)
 		try {
+			return parent::_getViewFileName($this->viewPath . DS . $this->apiFormat . DS . $name);
+		} catch (MissingViewException $e) { }
+
+		// Search relative path
+		try {
+			return parent::_getViewFileName($this->viewPath . DS . 'api' . DS . $name);
+		} catch (MissingViewException $e) { }
+
+		// Search relative path for the api format (json / xml)
+		try {
 			return parent::_getViewFileName($this->apiFormat . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search relative path
 		try {
-			return parent::_getViewFileName('api/' . $name);
+			return parent::_getViewFileName('api' . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search aboslute path for the api format (json / xml)
@@ -45,7 +55,7 @@ class ApiView extends View {
 
 		// Search aboslute path
 		try {
-			return parent::_getViewFileName('/api/' . $name);
+			return parent::_getViewFileName(DS . 'api' . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Default to the normal view if everything else fails
