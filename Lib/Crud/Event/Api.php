@@ -1,8 +1,6 @@
 <?php
 namespace Crud\Event;
 
-\App::uses('BaseFormDecorator', 'Crud.Form');
-
 class Api extends Base {
 
 	public function init(\Controller $controller, $action) {
