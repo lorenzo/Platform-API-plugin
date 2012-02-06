@@ -15,7 +15,7 @@ class ApiComponent extends Component {
 	*
 	* @var Controller
 	*/
-	protected $Controller;
+	protected $controller;
 
 	/**
 	* Reference to the current request
@@ -31,10 +31,10 @@ class ApiComponent extends Component {
 	*/
 	protected $response;
 
-	public function initialize(Controller $Controller) {
-		$this->controller	= $Controller;
-		$this->request		= $Controller->request;
-		$this->response		= $Controller->response;
+	public function initialize(Controller $controller) {
+		$this->controller	= $controller;
+		$this->request		= $controller->request;
+		$this->response		= $controller->response;
 
 		// Ensure we can detect API requests
 		$this->configureRequestDetectors();
@@ -50,7 +50,9 @@ class ApiComponent extends Component {
 		if (!$this->request->is('api')) {
 			return;
 		}
-		
+
+		$this->controller->getEventManager()->attach(new Crud\Event\Api());
+
 		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
@@ -67,7 +69,7 @@ class ApiComponent extends Component {
 		return get_class($this->controller) == 'CakeErrorController';
 	}
 
-	public function beforeRedirect($Controller, $url, $status = null, $exit = true) {
+	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
 		if ($this->request->is('api')) {
 			if (empty($status)) {
 				$status = 302;
@@ -76,7 +78,7 @@ class ApiComponent extends Component {
 			// Make sure URls always is absolute
 			$url = Router::url($url, true);
 
-			$Controller->view = 'redirect';
+			$controller->view = 'redirect';
 			switch($status) {
 				case 404:
 					$this->response->statusCode(404);
@@ -92,8 +94,8 @@ class ApiComponent extends Component {
 			}
 
 			// Render the redirect view
-			$Controller->set(compact('url', 'status'));
-			$Controller->render();
+			$controller->set(compact('url', 'status'));
+			$controller->render();
 
 			// Send the result and stop the request
 			$this->response->send();
