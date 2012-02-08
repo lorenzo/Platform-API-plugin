@@ -3,8 +3,9 @@ namespace Crud\Event;
 
 class Api extends Base {
 
-	public function init(\Controller $controller, $action) {
-		switch($action) {
+	public function init(\Controller $controller, $action = null) {
+		parent::init($controller, $action);
+		switch($this->action) {
 			case 'index':
 			case 'admin_index':
 				if (!$controller->request->is('get')) {
