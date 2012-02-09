@@ -15,7 +15,7 @@ class ApiComponent extends Component {
 	*
 	* @var Controller
 	*/
-	protected $Controller;
+	protected $controller;
 
 	/**
 	* Reference to the current request
@@ -51,6 +51,7 @@ class ApiComponent extends Component {
 			return;
 		}
 
+		$this->controller->getEventManager()->attach(new Crud\Event\Api());
 		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
