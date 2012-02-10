@@ -52,7 +52,6 @@ class ApiComponent extends Component {
 		}
 
 		$this->controller->getEventManager()->attach(new Crud\Event\Api());
-
 		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
@@ -70,7 +69,7 @@ class ApiComponent extends Component {
 	}
 
 	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
-		if ($this->request->is('api')) {
+		if ($controller->request->is('api')) {
 			if (empty($status)) {
 				$status = 302;
 			}
@@ -81,13 +80,13 @@ class ApiComponent extends Component {
 			$controller->view = 'redirect';
 			switch($status) {
 				case 404:
-					$this->response->statusCode(404);
-					$this->response->send();
+					$controller->response->statusCode(404);
+					$controller->response->send();
 					die;
 				case 301:
 				case 302:
-					$this->response->statusCode($status);
-					$this->response->header(array('location' => $url));
+					$controller->response->statusCode($status);
+					$controller->response->header(array('location' => $url));
 					break;
 				default:
 					break;
@@ -98,7 +97,7 @@ class ApiComponent extends Component {
 			$controller->render();
 
 			// Send the result and stop the request
-			$this->response->send();
+			$controller->response->send();
 			$this->_stop();
 		}
 	}
