@@ -75,6 +75,10 @@ class ApiComponent extends Component {
 		// Ensure we output data as JSON
 		$this->controller->layout = 'json/default';
 
+		// Override RequestHandler messing around with my layoutPaths
+		// If not set to null it may do json/json/default.ctp as layout in non-crud actions
+		$this->controller->layoutPath = null;
+
 		// Always repond as JSON
 		$this->controller->response->type('json');
 	}
