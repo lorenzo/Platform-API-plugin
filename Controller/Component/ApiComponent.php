@@ -82,7 +82,7 @@ class ApiComponent extends Component {
 				case 404:
 					$controller->response->statusCode(404);
 					$controller->response->send();
-					die;
+					$this->_stop();
 				case 301:
 				case 302:
 					$controller->response->statusCode($status);

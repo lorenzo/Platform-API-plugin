@@ -4,6 +4,7 @@ namespace Crud\Event;
 class Api extends Base {
 
 	public function init(\CakeEvent $event) {
+		$event->subject->controller->layout = 'json/default';
 		switch($event->subject->action) {
 			case 'index':
 			case 'admin_index':
@@ -30,6 +31,17 @@ class Api extends Base {
 				}
 				break;
 		}
+	}
+
+	public function afterSave(\CakeEvent $event) {
+		$response = $event->subject->controller->render();
+		if ($event->subject->success) {
+			$response->statusCode(201);
+			$response->header('Location', $event->subject->controller->url(array('action' => 'view', $event->subject->id), true));
+		}
+
+		$response->send();
+		$this->_stop();
 	}
 
 	public function recordNotFound(\CakeEvent $event) {
