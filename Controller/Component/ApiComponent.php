@@ -74,6 +74,9 @@ class ApiComponent extends Component {
 
 		// Ensure we output data as JSON
 		$this->controller->layout = 'json/default';
+
+		// Always repond as JSON
+		$this->controller->response->type('json');
 	}
 
 	public function hasError() {

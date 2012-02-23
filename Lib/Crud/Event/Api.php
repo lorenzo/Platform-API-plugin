@@ -32,10 +32,6 @@ class Api extends Base {
 		}
 	}
 
-	public function beforeRender(\CakeEvent $event) {
-		$event->subject->controller->response->type('json');
-	}
-
 	public function afterSave(\CakeEvent $event) {
 		$response = $event->subject->controller->render();
 		if ($event->subject->success) {
