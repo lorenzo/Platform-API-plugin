@@ -30,41 +30,39 @@ class ApiView extends View {
 
 		// Search relative path for the api format (json / xml)
 		try {
-			//debug$this->viewPath . DS . $this->apiFormat . DS . $name);
+			//debug($this->viewPath . DS . $this->apiFormat . DS . $name);
 			return parent::_getViewFileName($this->viewPath . DS . $this->apiFormat . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search relative path
 		try {
-			//debug$this->viewPath . DS . 'api' . DS . $name);
+			//debug($this->viewPath . DS . 'api' . DS . $name);
 			return parent::_getViewFileName($this->viewPath . DS . 'api' . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search relative path for the api format (json / xml)
 		try {
-			//debug$this->apiFormat . DS . $name);
+			//debug($this->apiFormat . DS . $name);
 			return parent::_getViewFileName($this->apiFormat . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search relative path
 		try {
-			//debug'api' . DS . $name);
+			//debug('api' . DS . $name);
 			return parent::_getViewFileName('api' . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search aboslute path for the api format (json / xml)
 		try {
-			//debugDS . $this->apiFormat . DS . $name);
+			//debug(DS . $this->apiFormat . DS . $name);
 			return parent::_getViewFileName(DS . $this->apiFormat . DS . $name);
 		} catch (MissingViewException $e) { }
 
 		// Search aboslute path
 		try {
-			//debugDS . 'api' . DS . $name);
+			//debug(DS . 'api' . DS . $name);
 			return parent::_getViewFileName(DS . 'api' . DS . $name);
 		} catch (MissingViewException $e) { }
-
-		//debug$this->_paths);
 
 		// Default to the normal view if everything else fails
 		return parent::_getViewFileName($name);
