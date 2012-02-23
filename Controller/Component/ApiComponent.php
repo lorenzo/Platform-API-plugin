@@ -51,17 +51,29 @@ class ApiComponent extends Component {
 			return;
 		}
 
+		// Read out the API token
+		$this->configureApiToken();
+
+		// Enforce API authentication
+		$this->configureApiAccess();
+
+		// Change viewClass
+		$this->beforeRender();
+	}
+
+	public function beforeRender() {
+		if (!$this->request->is('api')) {
+			return;
+		}
+
 		$this->controller->getEventManager()->attach(new Crud\Event\Api());
 		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
 		$this->controller->viewClass = 'Api.Api';
 
-		// Read out the API token
-		$this->configureApiToken();
-
-		// Enforce API authentication
-		$this->configureApiAccess();
+		// Ensure we output data as JSON
+		$this->controller->layout = 'json/default';
 	}
 
 	public function hasError() {

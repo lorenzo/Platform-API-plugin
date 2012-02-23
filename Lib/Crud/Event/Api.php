@@ -4,7 +4,6 @@ namespace Crud\Event;
 class Api extends Base {
 
 	public function init(\CakeEvent $event) {
-		$event->subject->controller->layout = 'json/default';
 		switch($event->subject->action) {
 			case 'index':
 			case 'admin_index':
