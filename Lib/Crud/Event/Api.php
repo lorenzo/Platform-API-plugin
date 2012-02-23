@@ -4,7 +4,6 @@ namespace Crud\Event;
 class Api extends Base {
 
 	public function init(\CakeEvent $event) {
-		$event->subject->controller->response->type('json');
 		$event->subject->controller->layout = 'json/default';
 		switch($event->subject->action) {
 			case 'index':
@@ -32,6 +31,10 @@ class Api extends Base {
 				}
 				break;
 		}
+	}
+
+	public function beforeRender(\CakeEvent $event) {
+		$event->subject->controller->response->type('json');
 	}
 
 	public function afterSave(\CakeEvent $event) {
