@@ -3,7 +3,7 @@ if (!isset($success)) {
 	$success = null;
 }
 if (!isset($data)) {
-	$data = false;
+	$data = null;
 }
 
 if (isset($this->Paginator) && $this->Paginator->defaultModel()) {

@@ -1,5 +1,6 @@
 <?php
 $success	= false;
+$data		= array();
 
 if (Configure::read('debug') && !empty($error)) {
 	$data['exception'] = array(
@@ -8,10 +9,8 @@ if (Configure::read('debug') && !empty($error)) {
 	);
 }
 
-if (Configure::read('debug') && !empty($_serialize)) {
-	foreach ($_serialize as $key) {
-		$data[$key] = $$key;
-	}
+foreach ($_serialize as $key) {
+	$data[$key] = $$key;
 }
 
 echo json_encode(compact('success', 'data'));
