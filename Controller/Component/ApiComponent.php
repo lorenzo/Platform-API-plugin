@@ -73,7 +73,11 @@ class ApiComponent extends Component {
 		$this->controller->viewClass = 'Api.Api';
 
 		// Ensure we output data as JSON
-		$this->controller->layout = 'json/default';
+		if ($this->hasError()) {
+			$this->controller->layout = 'Api.json/error';
+		} else {
+			$this->controller->layout = 'Api.json/default';
+		}
 
 		// Override RequestHandler messing around with my layoutPaths
 		// If not set to null it may do json/json/default.ctp as layout in non-crud actions

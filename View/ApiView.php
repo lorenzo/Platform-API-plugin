@@ -64,7 +64,7 @@ class ApiView extends View {
 			return parent::_getViewFileName(DS . 'api' . DS . $name);
 		} catch (MissingViewException $e) { }
 
-		// Default to the normal view if everything else fails
-		return parent::_getViewFileName($name);
+		// We couldn't find any API view, don't try any further
+		throw new MissingViewException('Could not find API view');
 	}
 }
