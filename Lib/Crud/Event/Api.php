@@ -36,7 +36,7 @@ class Api extends Base {
 		$response = $event->subject->controller->render();
 		if ($event->subject->success) {
 			$response->statusCode(201);
-			$response->header('Location', $event->subject->controller->url(array('action' => 'view', $event->subject->id), true));
+			$response->header('Location', \Router::url(array('action' => 'view', $event->subject->id), true));
 		}
 
 		$response->send();
