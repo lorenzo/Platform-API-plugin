@@ -7,7 +7,7 @@ __todo__
 * CakePHP 2.1
 * PHP 5.3
 * The Crud plugin ( https://github.com/nodesagency/Platform-Crud-Plugin )
-* A Auth handler that will validate and login a user by an accessToken (demo to come)
+* A Auth handler that will validate and login a user by an accessToken (demo and the end of this document)
 * PSR-0 class loader
 
 ## Cloning and loading
@@ -128,3 +128,107 @@ $validationErrors = array_filter($validationErrors);
 $this->set('success', empty($validationErrors));
 $this->set('data', $validationErrors);
 ````
+
+### Sample Authenticate class 
+
+Put the code in __app/Controller/Component/Auth/TokenAuthenticate.php__
+
+```php
+<?php
+/**
+ * Token Authenticator
+ *
+ * Allows people with access tokens to authenticate as a normal user
+ *
+ * @package Controller.Component.Auth
+ */
+class TokenAuthenticate extends BaseAuthenticate {
+    /**
+     * The user read from the Crowd server
+     *
+     * @var array
+     */
+    protected $user;
+
+    /**
+     * Authentication callback
+     *
+     * Its called by Cake's AuthComponent, and it expects it to either return false
+     * or an array with user data that will be cached from the entire session
+     *
+     * @cakephp
+     * @param CakeRequest   $request
+     * @param CakeResponse  $response
+     * @return boolean|array
+     */
+    public function authenticate(CakeRequest $request, CakeResponse $response) {
+        $token = Configure::read('Platform.AccessToken');
+        if (empty($token)) {
+            return false;
+        }
+
+        $User = ClassRegistry::init('User', 'Model');
+        $user = $User->findByAccessToken($token);
+        if (empty($user)) {
+            return false;
+        }
+
+        return $user['User'];
+    }
+
+    /**
+     * Logout callback
+     *
+     * Its called by Cake's AuthComponent when you request a logout, it expects to return an
+     * url to redirect the client to.
+     *
+     * But we also invalidate any tokens we might have cached to make sure it cannot be reused
+     *
+     * @return array
+     */
+    public function logout() {
+        return '/';
+    }
+}
+```
+
+Your controller (With Authentication, Crud and API loaded)
+
+```php
+<?php
+abstract class AppController extends Controller {
+    /**
+	* List of global controller components
+	*
+	* @cakephp
+	* @var array
+	*/
+	public $components = array(
+		// Enable Sessions
+		'Session',
+
+    	// Enable authentication
+		'Auth' => array(
+			'authorize' => array(
+				'Controller'
+			),
+			'authenticate' => array(
+				// Allow authentication by user / password
+				'Form',
+                
+				// Allow authentication by access token
+				'Token',
+			)
+		),
+
+		// Enable API views
+		'Api.Api',
+
+		// Enable CRUD actions
+		'Crud.Crud' => array(
+			'actions' => array('index', 'add', 'edit', 'view', 'delete'),
+			'validateId' => 'uuid'
+		),
+    );
+}
+```
