@@ -44,6 +44,6 @@ class Api extends Base {
 	}
 
 	public function recordNotFound(\CakeEvent $event) {
-		throw new \FileNotFoundException();
+		throw new \NotFoundException();
 	}
 }
