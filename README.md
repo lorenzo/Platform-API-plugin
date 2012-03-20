@@ -50,10 +50,10 @@ abstract class AppController extends Controller {
     * @var array
     */
     public $components = array(
-        // -- Make sure Crud component is loaded first --
-
         // Enable Api component
-        'Api.Api'
+        'Api.Api',
+
+        // -- Make sure Crud component is loaded *after* Api --
     );
 }
 ?>
