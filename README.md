@@ -7,7 +7,7 @@ __todo__
 * CakePHP 2.1
 * PHP 5.3
 * The Crud plugin ( https://github.com/nodesagency/Platform-Crud-Plugin )
-* A Auth handler that will validate and login a user by an accessToken (demo and the end of this document)
+* A Auth handler that will validate and login a user by an access_token (included in Controller/Auth/TokenAuthentication.php)
 * PSR-0 class loader
 
 ## Cloning and loading
@@ -51,7 +51,7 @@ abstract class AppController extends Controller {
     */
     public $components = array(
         // -- Make sure Crud component is loaded first --
-        
+
         // Enable Api component
         'Api.Api'
     );
@@ -59,29 +59,34 @@ abstract class AppController extends Controller {
 ?>
 ```
 
-When the component is loaded the following new features will be available
+When the component is loaded the following new CakeRequest detectors will be available
 
 // Test if this is an API call
 
 ```php
 <?php
-$this->request->is('api')
+$this->request->is('api');
 ```
 
 // Test if the current request prefers JSON
-```php
-<?php
-$this->request->is('json')
-```
-
-It will also write the provided accessToken passed in the current request
 
 ```php
 <?php
-Configure::read('Platform.AccessToken')
+$this->request->is('json');
 ```
 
-If the current request is deemed to be an API request, the component will automatically switch the View object in the Controller to Api.Api 
+// Make a controller action public (doesn't require access token)
+```php
+<?php
+$this->Api->allow('add');
+```
+// Make a controller action protected (require access token)
+```php
+<?php
+$this->Api->deny('add');
+```
+
+If the current request is deemed to be an API request, the component will automatically switch the View object in the Controller to Api.Api
 The plugin will automatically enforce basic access control
 
 * If the current request is an API call
@@ -129,68 +134,7 @@ $this->set('success', empty($validationErrors));
 $this->set('data', $validationErrors);
 ````
 
-### Sample Authenticate class 
-
-Put the code in __app/Controller/Component/Auth/TokenAuthenticate.php__
-
-```php
-<?php
-/**
- * Token Authenticator
- *
- * Allows people with access tokens to authenticate as a normal user
- *
- * @package Controller.Component.Auth
- */
-class TokenAuthenticate extends BaseAuthenticate {
-    /**
-     * The user read from the Crowd server
-     *
-     * @var array
-     */
-    protected $user;
-
-    /**
-     * Authentication callback
-     *
-     * Its called by Cake's AuthComponent, and it expects it to either return false
-     * or an array with user data that will be cached from the entire session
-     *
-     * @cakephp
-     * @param CakeRequest   $request
-     * @param CakeResponse  $response
-     * @return boolean|array
-     */
-    public function authenticate(CakeRequest $request, CakeResponse $response) {
-        $token = Configure::read('Platform.AccessToken');
-        if (empty($token)) {
-            return false;
-        }
-
-        $User = ClassRegistry::init('User', 'Model');
-        $user = $User->findByAccessToken($token);
-        if (empty($user)) {
-            return false;
-        }
-
-        return $user['User'];
-    }
-
-    /**
-     * Logout callback
-     *
-     * Its called by Cake's AuthComponent when you request a logout, it expects to return an
-     * url to redirect the client to.
-     *
-     * But we also invalidate any tokens we might have cached to make sure it cannot be reused
-     *
-     * @return array
-     */
-    public function logout() {
-        return '/';
-    }
-}
-```
+### Sample App Controller class with Crud and Api
 
 Your controller (With Authentication, Crud and API loaded)
 
@@ -204,7 +148,7 @@ abstract class AppController extends Controller {
 	* @var array
 	*/
 	public $components = array(
-		// Enable Sessions
+		// Enable Sessions (optional)
 		'Session',
 
     	// Enable authentication
@@ -215,19 +159,18 @@ abstract class AppController extends Controller {
 			'authenticate' => array(
 				// Allow authentication by user / password
 				'Form',
-                
+
 				// Allow authentication by access token
-				'Token',
+				'Api.Token',
 			)
 		),
 
-		// Enable API views
+		// Enable API views (make sure its before Crud)
 		'Api.Api',
 
 		// Enable CRUD actions
 		'Crud.Crud' => array(
-			'actions' => array('index', 'add', 'edit', 'view', 'delete'),
-			'validateId' => 'uuid'
+			'actions' => array('index', 'add', 'edit', 'view', 'delete')
 		),
     );
 }

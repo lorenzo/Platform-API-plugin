@@ -31,36 +31,67 @@ class ApiComponent extends Component {
 	*/
 	protected $response;
 
+	/**
+	* List of actions that can be accessed without authentication
+	*
+	* @var array
+	*/
+	protected $publicActions = array();
+
+	/**
+	* initialize callback
+	*
+	* @param Controller $controller
+	* @return void
+	*/
 	public function initialize(Controller $controller) {
-		$this->controller	= $controller;
-		$this->request		= $controller->request;
-		$this->response		= $controller->response;
-
 		// Ensure we can detect API requests
-		$this->configureRequestDetectors();
-		$this->setup();
+		$this->setup($controller);
 	}
 
+	/**
+	* startup method
+	*
+	* @param Controller $controller
+	* @return void
+	*/
 	public function startup(Controller $controller) {
-		$this->setup();
-	}
-
-	protected function setup() {
-		// Don't do additional work if its'n not an API request
-		if (!$this->request->is('api')) {
-			return;
-		}
-
-		// Read out the API token
-		$this->configureApiToken();
+		$this->setup($controller);
 
 		// Enforce API authentication
 		$this->configureApiAccess();
-
-		// Change viewClass
-		$this->beforeRender();
 	}
 
+	/**
+	* Allow public access to an action
+	*
+	* @param string $action
+	* @return void
+	*/
+	public function allowPublic($action) {
+		$this->publicActions[] = $action;
+	}
+
+	/**
+	* Deny public access to an action
+	*
+	* @param string $action
+	* @return boolean
+	*/
+	public function denyPublic($action) {
+		$pos = array_search($action, $this->publicActions);
+		if (false === $pos) {
+			return false;
+		}
+		unset($this->publicActions[$pos]);
+		return true;
+	}
+
+	/**
+	* beforeRender callback
+	*
+	* @return void
+	*/
 	public function beforeRender() {
 		if (!$this->request->is('api')) {
 			return;
@@ -87,11 +118,25 @@ class ApiComponent extends Component {
 		$this->controller->response->type('json');
 	}
 
+	/**
+	* Is the current controller an Error controller?
+	*
+	* @return boolean
+	*/
 	public function hasError() {
 		return get_class($this->controller) == 'CakeErrorController';
 	}
 
-	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
+	/**
+	* beforeRedirection
+	*
+	* @param Controller $controller
+	* @param mixed $url
+	* @param integer $status
+	* @param boolean $exit
+	* @return void
+	*/
+	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
 		if ($controller->request->is('api')) {
 			if (empty($status)) {
 				$status = 302;
@@ -126,32 +171,62 @@ class ApiComponent extends Component {
 	}
 
 	/**
+	* Setup method
+	*
+	* @param Controller $controller
+	* @return void
+	*/
+	protected function setup(Controller $controller) {
+		// Cache local properties from the controller
+		$this->controller	= $controller;
+		$this->request		= $controller->request;
+		$this->response		= $controller->response;
+
+		// Configure detectors
+		$this->configureRequestDetectors();
+
+		// Copy publicActions from the controller if set and no actions has been defined already
+		// @todo: This is legacy, remove it
+		if (isset($this->controller->publicActions) && empty($this->publicActions)) {
+			$this->publicActions = $this->controller->publicActions;
+		}
+	}
+
+	/**
 	* Ensures that the current request is validated for Authentication
 	*
+	* @return void
 	*/
 	protected function configureApiAccess() {
-		// Do not enforce authentication if the request isn't API
+		// Do not require authentication if the request isn't considered API
 		if (!$this->request->is('api')) {
 			return;
 		}
 
-		// Don't enforce API access check if the request is public
-		if ($this->hasError()) {
+		// If its a public action, do not enforce API security checks
+		if (in_array($this->controller->action, $this->publicActions)) {
 			return;
 		}
 
-		// If its a public action, do not enforce API security checks
-		if (in_array($this->controller->action, $this->controller->publicActions)) {
+		// If the user has a isAuthorizedApi method, call it and don't check anything else
+		if (method_exists($this->controller, 'isAuthorizedApi')) {
+			if (!$this->controller->isAuthorizedApi()) {
+				throw new ForbiddenException('Permission denied');
+			}
+
 			return;
 		}
 
 		// Do not enforce authentication if the request is already authenticated
-		if ($this->controller->Auth->user()) {
+		if (isset($this->controller->Auth) && $this->controller->Auth->user()) {
 			return;
 		}
 
+		// Get the access token, if any
+		$token = ApiUtility::getRequestToken($this->request);
+
 		// Deny access if no AccessToken is provided
-		if (!Configure::read('Platform.AccessToken')) {
+		if (empty($token)) {
 			throw new ForbiddenException('Permission denied, missing access token');
 		}
 
@@ -162,33 +237,12 @@ class ApiComponent extends Component {
 	}
 
 	/**
-	* Tries to find the AccessToken from a long range of entry points
+	* Configure detectors for API requests
 	*
+	* Add detectors for ->is('api') and ->is('json') on CakeRequest
+	*
+	* @return void
 	*/
-	protected function configureApiToken() {
-		$token = null;
-
-		// Check if the token is posted to the action
-		if (!empty($this->request->data['token'])) {
-			$token = $this->request->data['token'];
-		}
-		// Check if the token is passed as a query argument (?token=$token)
-		elseif (!empty($this->request->query['token'])) {
-			$token = $this->request->query['token'];
-		}
-		// Check if the token is passed as named argument (/token:$token)
-		elseif (!empty($this->request->params['named']['token'])) {
-			$token = $this->request->params['named']['token'];
-		}
-		// Check if the token is passed as a HTTP header
-		elseif (!empty($_SERVER['HTTP_PLATFORM_TOKEN'])) {
-			$token = $_SERVER['HTTP_PLATFORM_TOKEN'];
-		}
-
-		// Write the found AccessToken (if any)
-		Configure::write('Platform.AccessToken', $token);
-	}
-
 	protected function configureRequestDetectors() {
 		// Add detector for json
 		$this->request->addDetector('json', array('callback' => function(CakeRequest $request) {
