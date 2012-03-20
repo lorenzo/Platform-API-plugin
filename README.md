@@ -61,26 +61,29 @@ abstract class AppController extends Controller {
 
 When the component is loaded the following new CakeRequest detectors will be available
 
-// Test if this is an API call
+## Test if this is an API call
 
 ```php
 <?php
 $this->request->is('api');
 ```
 
-// Test if the current request prefers JSON
+## Test if the current request prefers JSON
 
 ```php
 <?php
 $this->request->is('json');
 ```
 
-// Make a controller action public (doesn't require access token)
+## Make a controller action public (doesn't require access token)
+
 ```php
 <?php
 $this->Api->allow('add');
 ```
-// Make a controller action protected (require access token)
+
+## Make a controller action protected (require access token)
+
 ```php
 <?php
 $this->Api->deny('add');
