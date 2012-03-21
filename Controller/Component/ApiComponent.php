@@ -97,7 +97,6 @@ class ApiComponent extends Component {
 			return;
 		}
 
-		$this->controller->getEventManager()->attach(new Crud\Event\Api());
 		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
@@ -184,6 +183,9 @@ class ApiComponent extends Component {
 
 		// Configure detectors
 		$this->configureRequestDetectors();
+
+		// Bind Crud Event Api
+		$this->controller->getEventManager()->attach(new Crud\Event\Api());
 
 		// Copy publicActions from the controller if set and no actions has been defined already
 		// @todo: This is legacy, remove it
