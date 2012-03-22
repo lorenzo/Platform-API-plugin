@@ -184,6 +184,12 @@ class ApiComponent extends Component {
 		$this->request		= $controller->request;
 		$this->response		= $controller->response;
 
+
+		// Don't do anything if the request isn't considered API
+		if (!$this->request->is('api')) {
+			return;
+		}
+
 		// Configure detectors
 		$this->configureRequestDetectors();
 
