@@ -29,6 +29,7 @@ Add the following to your __app/Config/bootstrap.php__
 ```php
 <?php
 CakePlugin::load('Api');
+?>
 ```
 
 In your (app) controller load the Crud component
@@ -65,6 +66,7 @@ When the component is loaded the following new CakeRequest detectors will be ava
 ```php
 <?php
 $this->request->is('api');
+?>
 ```
 
 ### Test if the current request prefers JSON or has .json extension
@@ -72,6 +74,7 @@ $this->request->is('api');
 ```php
 <?php
 $this->request->is('json');
+?>
 ```
 
 ### Make a controller API action public (doesn't require access token)
@@ -79,6 +82,7 @@ $this->request->is('json');
 ```php
 <?php
 $this->Api->allowPublic('add');
+?>
 ```
 
 ### Make a controller API action protected (require access token)
@@ -86,6 +90,7 @@ $this->Api->allowPublic('add');
 ```php
 <?php
 $this->Api->denyPublic('add');
+?>
 ```
 
 If the current request is deemed to be an API request, the component will automatically switch the View object in the Controller to Api.ApiView
@@ -134,6 +139,7 @@ $validationErrors = array_filter($validationErrors);
 
 $this->set('success', empty($validationErrors));
 $this->set('data', $validationErrors);
+?>
 ````
 
 ### Sample App Controller class with Crud and Api
@@ -176,4 +182,5 @@ abstract class AppController extends Controller {
 		),
     );
 }
+?>
 ```
