@@ -1,9 +1,9 @@
 <?php
-namespace Crud\Event;
+App::uses('CrudBaseEvent', 'Crud.Controller/Event');
 
-class Api extends Base {
+class ApiEvent extends CrudBaseEvent {
 
-	public function init(\CakeEvent $event) {
+	public function init(CakeEvent $event) {
 		switch($event->subject->action) {
 			case 'index':
 			case 'admin_index':
@@ -32,7 +32,7 @@ class Api extends Base {
 		}
 	}
 
-	public function afterSave(\CakeEvent $event) {
+	public function afterSave(CakeEvent $event) {
 		$response = $event->subject->controller->render();
 		if ($event->subject->success) {
 			$response->statusCode(201);
@@ -43,7 +43,7 @@ class Api extends Base {
 		$this->_stop();
 	}
 
-	public function recordNotFound(\CakeEvent $event) {
+	public function recordNotFound(CakeEvent $event) {
 		throw new \NotFoundException();
 	}
 }

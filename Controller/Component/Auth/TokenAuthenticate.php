@@ -1,4 +1,5 @@
 <?php
+App::uses('ApiUtility', 'Api.Lib');
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 
 /**

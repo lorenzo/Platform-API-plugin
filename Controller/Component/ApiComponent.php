@@ -1,4 +1,7 @@
 <?php
+App::uses('ApiUtility', 'Api.Lib');
+App::uses('ApiEvent', 'Api.Controller/Event');
+
 /**
  * API component
  *
@@ -185,7 +188,7 @@ class ApiComponent extends Component {
 		$this->configureRequestDetectors();
 
 		// Bind Crud Event Api
-		$this->controller->getEventManager()->attach(new Crud\Event\Api());
+		$this->controller->getEventManager()->attach(new ApiEvent());
 
 		// Copy publicActions from the controller if set and no actions has been defined already
 		// @todo: This is legacy, remove it
