@@ -192,6 +192,9 @@ class ApiComponent extends Component {
 		if (isset($this->controller->publicActions) && empty($this->publicActions)) {
 			$this->publicActions = $this->controller->publicActions;
 		}
+
+		// Change Exception.renderer so output isn't forced to HTML
+		Configure::write('Exception.renderer', 'Api.ApiExceptionRenderer');
 	}
 
 	/**

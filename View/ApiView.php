@@ -24,7 +24,6 @@ class ApiView extends View {
 		return $this->_paths = $paths;
 	}
 
-
 	protected function _getViewFileName($name = null) {
 		$name = $name ?: $this->view;
 
