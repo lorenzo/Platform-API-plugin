@@ -184,14 +184,13 @@ class ApiComponent extends Component {
 		$this->request		= $controller->request;
 		$this->response		= $controller->response;
 
+		// Configure detectors
+		$this->configureRequestDetectors();
 
 		// Don't do anything if the request isn't considered API
 		if (!$this->request->is('api')) {
 			return;
 		}
-
-		// Configure detectors
-		$this->configureRequestDetectors();
 
 		// Bind Crud Event Api
 		$this->controller->getEventManager()->attach(new ApiEvent());
