@@ -7,7 +7,7 @@ __todo__
 * CakePHP 2.1
 * PHP 5.3
 * The Crud plugin ( https://github.com/nodesagency/Platform-Crud-Plugin )
-* A Auth handler that will validate and login a user by an access_token (included in Controller/Auth/TokenAuthentication.php)
+* An Auth handler that will validate and login a user by an access_token (included in Controller/Auth/TokenAuthentication.php)
 
 ## Cloning and loading
 
