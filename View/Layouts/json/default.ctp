@@ -17,6 +17,7 @@ if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
 
 	$pagination = array(
 		'pageCount' => $_pagination['pageCount'],
+		'current'   => $_pagination['current'],
 		'count' 	=> $_pagination['count']
 	);
 
