@@ -10,6 +10,8 @@ if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
 	$_pagination = $this->Paginator->request->paging;
 	$_pagination = $_pagination[$this->Paginator->defaultModel()];
 
+	$extra_paginator_url_params = empty($extra_paginator_url_params) ? array() : $extra_paginator_url_params;
+
 	$pagination = array(
 		'pageCount' => $_pagination['pageCount'],
 		'current'   => $_pagination['page'],
@@ -17,13 +19,13 @@ if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
 	);
 
 	if ($this->Paginator->hasPrev()) {
-		$pagination['prev'] = Router::url($this->Paginator->url(array('page' => $_pagination['page'] - 1, 'ext' => 'json', '?' => array('token' => $apiAccessToken)), true), true);
+		$pagination['prev'] = Router::url($this->Paginator->url($extra_paginator_url_params + array('page' => $_pagination['page'] - 1, 'ext' => 'json', '?' => array('token' => $apiAccessToken)), true), true);
 	} else {
 		$pagination['prev'] = false;
 	}
 
 	if ($this->Paginator->hasNext()) {
-		$pagination['next'] = Router::url($this->Paginator->url(array('page' => $_pagination['page'] + 1, 'ext' => 'json', '?' => array('token' => $apiAccessToken)), true), true);
+		$pagination['next'] = Router::url($this->Paginator->url($extra_paginator_url_params + array('page' => $_pagination['page'] + 1, 'ext' => 'json', '?' => array('token' => $apiAccessToken)), true), true);
 	} else {
 		$pagination['next'] = false;
 	}
