@@ -7,11 +7,6 @@ if (!isset($data)) {
 }
 
 if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
-	$this->Paginator->options(array(
-		'convertKeys' 	=> array('token'),
-		'url' 			=> array('token' => Configure::read('Platform.AccessToken'))
-	));
-
 	$_pagination = $this->Paginator->request->paging;
 	$_pagination = $_pagination[$this->Paginator->defaultModel()];
 
@@ -21,13 +16,13 @@ if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
 	);
 
 	if ($this->Paginator->hasPrev()) {
-		$pagination['prev'] = Router::url($this->Paginator->url(array('page' => $_pagination['page'] - 1, 'ext' => 'json', 'token' => Configure::read('Platform.AccessToken'))), true);
+		$pagination['prev'] = Router::url($this->Paginator->url(array('page' => $_pagination['page'] - 1, 'ext' => 'json', '?' => array('token' => $apiAccessToken)), true), true);
 	} else {
 		$pagination['prev'] = false;
 	}
 
 	if ($this->Paginator->hasNext()) {
-		$pagination['next'] = Router::url($this->Paginator->url(array('page' => $_pagination['page'] + 1, 'ext' => 'json', 'token' => Configure::read('Platform.AccessToken'))), true);
+		$pagination['next'] = Router::url($this->Paginator->url(array('page' => $_pagination['page'] + 1, 'ext' => 'json', '?' => array('token' => $apiAccessToken)), true), true);
 	} else {
 		$pagination['next'] = false;
 	}

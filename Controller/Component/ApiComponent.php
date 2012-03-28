@@ -116,6 +116,10 @@ class ApiComponent extends Component {
 
 		// Always repond as JSON
 		$this->controller->response->type('json');
+
+		// Publish the token
+		$token = ApiUtility::getRequestToken($this->request);
+		$this->controller->set('apiAccessToken', $token);
 	}
 
 	/**
