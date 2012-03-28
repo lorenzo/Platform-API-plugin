@@ -7,8 +7,7 @@ __todo__
 * CakePHP 2.1
 * PHP 5.3
 * The Crud plugin ( https://github.com/nodesagency/Platform-Crud-Plugin )
-* A Auth handler that will validate and login a user by an access_token (included in Controller/Auth/TokenAuthentication.php)
-* PSR-0 class loader
+* An Auth handler that will validate and login a user by an access_token (included in Controller/Auth/TokenAuthentication.php)
 
 ## Cloning and loading
 
@@ -25,11 +24,12 @@ git submodule add git://github.com/nodesagency/Platform-API-Plugin.git app/Plugi
 ```
 
 # Loading
-Add the following to your __app/Config/bootstrap.php__ - make sure to include the __bootstrap__ key
+Add the following to your __app/Config/bootstrap.php__
 
 ```php
 <?php
-CakePlugin::load('Api', array('bootstrap' => true));
+CakePlugin::load('Api');
+?>
 ```
 
 In your (app) controller load the Crud component
@@ -61,35 +61,39 @@ abstract class AppController extends Controller {
 
 When the component is loaded the following new CakeRequest detectors will be available
 
-### Test if this is an API call
+### Test if the request is an API call
 
 ```php
 <?php
 $this->request->is('api');
+?>
 ```
 
-### Test if the current request prefers JSON
+### Test if the current request prefers JSON or has .json extension
 
 ```php
 <?php
 $this->request->is('json');
+?>
 ```
 
-### Make a controller action public (doesn't require access token)
+### Make a controller API action public (doesn't require access token)
 
 ```php
 <?php
-$this->Api->allow('add');
+$this->Api->allowPublic('add');
+?>
 ```
 
-### Make a controller action protected (require access token)
+### Make a controller API action protected (require access token)
 
 ```php
 <?php
-$this->Api->deny('add');
+$this->Api->denyPublic('add');
+?>
 ```
 
-If the current request is deemed to be an API request, the component will automatically switch the View object in the Controller to Api.Api
+If the current request is deemed to be an API request, the component will automatically switch the View object in the Controller to Api.ApiView
 The plugin will automatically enforce basic access control
 
 * If the current request is an API call
@@ -135,6 +139,7 @@ $validationErrors = array_filter($validationErrors);
 
 $this->set('success', empty($validationErrors));
 $this->set('data', $validationErrors);
+?>
 ````
 
 ### Sample App Controller class with Crud and Api
@@ -177,4 +182,5 @@ abstract class AppController extends Controller {
 		),
     );
 }
+?>
 ```

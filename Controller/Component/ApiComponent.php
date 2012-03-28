@@ -1,4 +1,7 @@
 <?php
+App::uses('ApiUtility', 'Api.Lib');
+App::uses('ApiEvent', 'Api.Controller/Event');
+
 /**
  * API component
  *
@@ -97,7 +100,6 @@ class ApiComponent extends Component {
 			return;
 		}
 
-		$this->controller->getEventManager()->attach(new Crud\Event\Api());
 		Configure::write('ResponseObject', $this->response);
 
 		// Switch to the API view class
@@ -189,11 +191,22 @@ class ApiComponent extends Component {
 		// Configure detectors
 		$this->configureRequestDetectors();
 
+		// Don't do anything if the request isn't considered API
+		if (!$this->request->is('api')) {
+			return;
+		}
+
+		// Bind Crud Event Api
+		$this->controller->getEventManager()->attach(new ApiEvent());
+
 		// Copy publicActions from the controller if set and no actions has been defined already
 		// @todo: This is legacy, remove it
 		if (isset($this->controller->publicActions) && empty($this->publicActions)) {
 			$this->publicActions = $this->controller->publicActions;
 		}
+
+		// Change Exception.renderer so output isn't forced to HTML
+		Configure::write('Exception.renderer', 'Api.ApiExceptionRenderer');
 	}
 
 	/**
