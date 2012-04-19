@@ -28,7 +28,7 @@ Add the following to your __app/Config/bootstrap.php__
 
 ```php
 <?php
-CakePlugin::load('Api');
+CakePlugin::load('Api', array('bootstrap' => true, 'routes' => true));
 ?>
 ```
 
