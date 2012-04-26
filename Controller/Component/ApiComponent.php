@@ -7,7 +7,7 @@ App::uses('ApiEvent', 'Api.Controller/Event');
  *
  * Handles the automatic transformation of HTTP requests to API responses
  *
- * @see https://wiki.ournodes.com/display/platform/Api+Plugin
+ * @see https://github.com/nodesagency/Platform-API-plugin/blob/master/README.md
  * @see http://book.cakephp.org/2.0/en/controllers/components.html#Component
  * @copyright Nodes ApS, 2011
  */
