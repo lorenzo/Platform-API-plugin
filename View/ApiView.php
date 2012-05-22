@@ -24,46 +24,50 @@ class ApiView extends View {
 		return $this->_paths = $paths;
 	}
 
+	/**
+	 * _getViewFileName
+	 *
+	 * Search relative and absolute (to the view folder) paths for which view to use for the given api call
+	 *
+	 * @param mixed $name
+	 * @return void
+	 */
 	protected function _getViewFileName($name = null) {
 		$name = $name ?: $this->view;
 
-		// Search relative path for the api format (json / xml)
 		try {
 			//debug($this->viewPath . DS . $this->apiFormat . DS . $name);
 			return parent::_getViewFileName($this->viewPath . DS . $this->apiFormat . DS . $name);
 		} catch (MissingViewException $e) { }
 
-		// Search relative path
+		$files[] = $this->viewPath . DS . 'api' . DS . $name;
 		try {
-			//debug($this->viewPath . DS . 'api' . DS . $name);
-			return parent::_getViewFileName($this->viewPath . DS . 'api' . DS . $name);
+			return parent::_getViewFileName(end($files));
 		} catch (MissingViewException $e) { }
 
-		// Search relative path for the api format (json / xml)
+		$files[] = $this->apiFormat . DS . $name;
 		try {
-			//debug($this->apiFormat . DS . $name);
-			return parent::_getViewFileName($this->apiFormat . DS . $name);
+			return parent::_getViewFileName(end($files));
 		} catch (MissingViewException $e) { }
 
-		// Search relative path
+		$files[] = 'api' . DS . $name;
 		try {
-			//debug('api' . DS . $name);
-			return parent::_getViewFileName('api' . DS . $name);
+			return parent::_getViewFileName(end($files));
 		} catch (MissingViewException $e) { }
 
-		// Search aboslute path for the api format (json / xml)
+		$files[] = DS . $this->apiFormat . DS . $name;
 		try {
-			//debug(DS . $this->apiFormat . DS . $name);
-			return parent::_getViewFileName(DS . $this->apiFormat . DS . $name);
+			return parent::_getViewFileName(end($files));
 		} catch (MissingViewException $e) { }
 
-		// Search aboslute path
+		$files[] = DS . 'api' . DS . $name;
 		try {
-			//debug(DS . 'api' . DS . $name);
-			return parent::_getViewFileName(DS . 'api' . DS . $name);
+			return parent::_getViewFileName(end($files));
 		} catch (MissingViewException $e) { }
 
-		// We couldn't find any API view, don't try any further
-		throw new MissingViewException('Could not find API view');
+		foreach($files as &$file) {
+			$file .= '.ctp';
+		}
+		throw new MissingViewException("Could not find API view for $name, create one of " . implode(', ', $files));
 	}
 }
