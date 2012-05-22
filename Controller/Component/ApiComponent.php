@@ -215,6 +215,10 @@ class ApiComponent extends Component {
 	* @return void
 	*/
 	protected function configureApiAccess() {
+		if ($this->hasError()) {
+			return;
+		}
+
 		// Do not require authentication if the request isn't considered API
 		if (!$this->request->is('api')) {
 			return;
