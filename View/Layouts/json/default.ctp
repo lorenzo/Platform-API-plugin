@@ -31,4 +31,17 @@ if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
 	}
 }
 
-echo json_encode(compact('success', 'data', 'pagination'));
+if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
+	$sources = ConnectionManager::sourceList();
+
+	$queryLog = array();
+	foreach ($sources as $source) {
+		$db = ConnectionManager::getDataSource($source);
+		if (!method_exists($db, 'getLog')) {
+			continue;
+		}
+		$queryLog[$source] = $db->getLog();
+	}
+}
+
+echo json_encode(compact('success', 'data', 'pagination', 'queryLog'));
