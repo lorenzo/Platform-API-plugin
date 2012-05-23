@@ -2,25 +2,29 @@
 $success	= false;
 $data		= array();
 
-if (Configure::read('debug') && !empty($error)) {
+if (!empty($error)) {
 	$data['exception'] = array(
-		'class' => get_class($error),
-		'trace'	=> $error->getTraceAsString()
+		'class' 	=> get_class($error),
+		'code'		=> $error->getCode(),
+		'message'	=> $error->getMessage(),
 	);
 
-	if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
-		$sources = ConnectionManager::sourceList();
+	if (Configure::read('debug')) {
+		$data['exception']['trace'] = $error->getTraceAsString();
 
-		$queryLog = array();
-		foreach ($sources as $source) {
-			$db = ConnectionManager::getDataSource($source);
-			if (!method_exists($db, 'getLog')) {
-				continue;
+		if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
+			$sources = ConnectionManager::sourceList();
+
+			$queryLog = array();
+			foreach ($sources as $source) {
+				$db = ConnectionManager::getDataSource($source);
+				if (!method_exists($db, 'getLog')) {
+					continue;
+				}
+				$data['queryLog'][$source] = $db->getLog();
 			}
-			$data['queryLog'][$source] = $db->getLog();
 		}
 	}
-
 }
 
 foreach ($_serialize as $key) {
