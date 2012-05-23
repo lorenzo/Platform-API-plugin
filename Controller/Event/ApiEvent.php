@@ -73,6 +73,14 @@ class ApiEvent extends CrudBaseEvent {
 		$this->_stop();
 	}
 
+	public function afterDelete(CakeEvent $event) {
+		$event->subject->controller->set('success', $event->subject->success);
+
+		$response = $event->subject->controller->render();
+		$response->send();
+		$this->_stop();
+	}
+
 	public function recordNotFound(CakeEvent $event) {
 		throw new \NotFoundException();
 	}
