@@ -166,8 +166,10 @@ class ApiComponent extends Component {
 					break;
 			}
 
+			$success = true;
+
 			// Render the redirect view
-			$controller->set(compact('url', 'status'));
+			$controller->set(compact('success', 'url', 'status'));
 			$controller->render();
 
 			// Send the result and stop the request

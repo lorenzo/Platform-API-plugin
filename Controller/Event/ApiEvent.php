@@ -64,6 +64,7 @@ class ApiEvent extends CrudBaseEvent {
 
 	public function afterSave(CakeEvent $event) {
 		$response = $event->subject->controller->render();
+
 		if ($event->subject->success) {
 			$response->statusCode(201);
 			$response->header('Location', \Router::url(array('action' => 'view', $event->subject->id), true));
