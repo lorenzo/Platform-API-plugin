@@ -44,4 +44,10 @@ if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
 	}
 }
 
-echo json_encode(compact('success', 'data', 'pagination', 'queryLog'));
+$out = json_encode(compact('success', 'data', 'pagination', 'queryLog'));
+
+if (Configure::read('debug')) {
+	echo $this->JsonFormat->format($out);
+} else {
+	echo $out;
+}
