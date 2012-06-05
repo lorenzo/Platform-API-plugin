@@ -31,4 +31,9 @@ foreach ($_serialize as $key) {
 	$data[$key] = $$key;
 }
 
-echo json_encode(compact('success', 'data'));
+$out = json_encode(compact('success', 'data'));
+if (Configure::read('debug')) {
+	echo $this->JsonFormat->format($out);
+} else {
+	echo $out;
+}

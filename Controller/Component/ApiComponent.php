@@ -104,6 +104,9 @@ class ApiComponent extends Component {
 
 		// Switch to the API view class
 		$this->controller->viewClass = 'Api.Api';
+		if (Configure::read('debug')) {
+			$this->controller->helpers[] = 'Api.JsonFormat';
+		}
 
 		// Ensure we output data as JSON
 		if ($this->hasError()) {
