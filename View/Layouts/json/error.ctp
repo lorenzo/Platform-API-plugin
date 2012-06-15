@@ -10,14 +10,14 @@ if (!empty($error)) {
 	);
 
 	if (Configure::read('debug')) {
-		$data['exception']['trace'] = $error->getTrace();
+		$data['exception']['trace'] = preg_split('@\n@', $error->getTraceAsString());
 		$previous = $error->getPrevious();
 		if ($previous) {
 			$data['previous'] = array(
 				'class' => get_class($previous),
 				'code' => $previous->getCode(),
 				'message' => $previous->getMessage(),
-				'trace' => $previous->getTrace()
+				'trace' => preg_split('@\n@', $previous->getTraceAsString())
 			);
 		}
 
