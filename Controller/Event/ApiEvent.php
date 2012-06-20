@@ -85,4 +85,8 @@ class ApiEvent extends CrudBaseEvent {
 	public function recordNotFound(CakeEvent $event) {
 		throw new \NotFoundException();
 	}
+
+	public function invalidId(CakeEvent $event) {
+		throw new \NotFoundException('Invalid id specified');
+	}
 }

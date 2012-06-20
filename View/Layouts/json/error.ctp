@@ -10,7 +10,16 @@ if (!empty($error)) {
 	);
 
 	if (Configure::read('debug')) {
-		$data['exception']['trace'] = $error->getTraceAsString();
+		$data['exception']['trace'] = preg_split('@\n@', $error->getTraceAsString());
+		$previous = $error->getPrevious();
+		if ($previous) {
+			$data['previous'] = array(
+				'class' => get_class($previous),
+				'code' => $previous->getCode(),
+				'message' => $previous->getMessage(),
+				'trace' => preg_split('@\n@', $previous->getTraceAsString())
+			);
+		}
 
 		if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
 			$sources = ConnectionManager::sourceList();
@@ -31,4 +40,9 @@ foreach ($_serialize as $key) {
 	$data[$key] = $$key;
 }
 
-echo json_encode(compact('success', 'data'));
+$out = json_encode(compact('success', 'data'));
+if (Configure::read('debug')) {
+	echo $this->JsonFormat->format($out);
+} else {
+	echo $out;
+}
