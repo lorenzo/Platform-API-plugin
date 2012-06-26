@@ -30,7 +30,7 @@ if (!empty($error)) {
 				if (!method_exists($db, 'getLog')) {
 					continue;
 				}
-				$data['queryLog'][$source] = $db->getLog();
+				$data['queryLog'][$source] = $db->getLog(false, false);
 			}
 		}
 	}

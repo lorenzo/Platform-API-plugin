@@ -119,9 +119,6 @@ class ApiComponent extends Component {
 		// If not set to null it may do json/json/default.ctp as layout in non-crud actions
 		$this->controller->layoutPath = null;
 
-		// Always repond as JSON
-		$this->controller->response->type('json');
-
 		// Publish the token
 		$token = ApiUtility::getRequestToken($this->request);
 		$this->controller->set('apiAccessToken', $token);
@@ -212,6 +209,9 @@ class ApiComponent extends Component {
 
 		// Change Exception.renderer so output isn't forced to HTML
 		Configure::write('Exception.renderer', 'Api.ApiExceptionRenderer');
+
+		// Always repond as JSON
+		$this->controller->response->type('json');
 	}
 
 	/**
