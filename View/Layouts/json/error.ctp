@@ -4,7 +4,7 @@ $data		= array();
 
 if (!empty($error)) {
 	$data['exception'] = array(
-		'class' 	=> get_class($error),
+		'class'		=> get_class($error),
 		'code'		=> $error->getCode(),
 		'message'	=> $error->getMessage(),
 	);
@@ -41,8 +41,13 @@ foreach ($_serialize as $key) {
 }
 
 $out = json_encode(compact('success', 'data'));
+
 if (Configure::read('debug')) {
-	echo $this->JsonFormat->format($out);
+	$out = $this->JsonFormat->format($out);
+}
+
+if ($allowJsonp && !empty($this->params->query['callback'])) {
+	printf('%s(%s)', $this->params->query['callback'], $out);
 } else {
 	echo $out;
 }

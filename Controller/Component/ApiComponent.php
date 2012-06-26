@@ -42,6 +42,11 @@ class ApiComponent extends Component {
 	protected $publicActions = array();
 
 	/**
+	 * @var boolean
+	 */
+	protected $allowJsonp = false;
+
+	/**
 	* initialize callback
 	*
 	* @param Controller $controller
@@ -91,6 +96,16 @@ class ApiComponent extends Component {
 	}
 
 	/**
+	* Allow jsonp
+	*
+	* @param boolean
+	* @return void
+	*/
+	public function allowJsonp($value = true) {
+		$this->allowJsonp = (boolean)$value;
+	}
+
+	/**
 	* beforeRender callback
 	*
 	* @return void
@@ -125,6 +140,7 @@ class ApiComponent extends Component {
 		// Publish the token
 		$token = ApiUtility::getRequestToken($this->request);
 		$this->controller->set('apiAccessToken', $token);
+		$this->controller->set('allowJsonp', $this->allowJsonp);
 	}
 
 	/**
