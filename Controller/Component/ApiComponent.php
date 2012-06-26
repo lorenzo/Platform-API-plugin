@@ -278,7 +278,7 @@ class ApiComponent extends Component {
 			}
 
 			// Or try to sniff out the accept header
-			return $request->accepts('json');
+			return $request->accepts('application/json');
 		}));
 
 		// Generic API check
