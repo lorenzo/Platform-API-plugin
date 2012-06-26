@@ -24,6 +24,16 @@ class ApiView extends View {
 	 */
 	protected function _getViewFileName($name = null) {
 		$name = $name ?: $this->view;
-		return parent::_getViewFileName($this->viewPath . DS . $this->apiFormat . DS . $name);
+		
+
+		try {
+			return parent::_getViewFileName($this->apiFormat . DS . $name);
+		} catch (MissingViewException $e) {
+			if (isset($this->viewVars['success']) || isset($this->viewVars['data'])) {
+				return parent::_getViewFileName(DS . $this->apiFormat . DS . 'fallback_template');
+			}
+			throw $e;
+		}
+
 	}
 }
