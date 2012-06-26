@@ -40,7 +40,7 @@ if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
 		if (!method_exists($db, 'getLog')) {
 			continue;
 		}
-		$queryLog[$source] = $db->getLog();
+		$queryLog[$source] = $db->getLog(false, false);
 	}
 }
 
