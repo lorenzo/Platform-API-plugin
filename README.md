@@ -43,18 +43,18 @@ In your (app) controller load the Crud component
  * @package App.Controller
  */
 abstract class AppController extends Controller {
-    /**
-    * List of global controller components
-    *
-    * @cakephp
-    * @var array
-    */
-    public $components = array(
-        // Enable Api component
-        'Api.Api',
+	/**
+	* List of global controller components
+	*
+	* @cakephp
+	* @var array
+	*/
+	public $components = array(
+		// Enable Api component
+		'Api.Api',
 
-        // -- Make sure Crud component is loaded *after* Api --
-    );
+		// -- Make sure Crud component is loaded *after* Api --
+	);
 }
 ?>
 ```
@@ -142,6 +142,16 @@ $this->set('data', $validationErrors);
 ?>
 ````
 
+### Allow jsonp in your beforeFilter()
+
+```php
+<?php
+$this->Api->allowJsonp(); // Allow jsonp
+$this->Api->allowJsonp(true); // Allow jsonp (Same as line above)
+$this->Api->allowJsonp(false); // Deny jsonp
+?>
+```
+
 ### Sample App Controller class with Crud and Api
 
 Your controller (With Authentication, Crud and API loaded)
@@ -149,7 +159,7 @@ Your controller (With Authentication, Crud and API loaded)
 ```php
 <?php
 abstract class AppController extends Controller {
-    /**
+	/**
 	* List of global controller components
 	*
 	* @cakephp
@@ -159,7 +169,7 @@ abstract class AppController extends Controller {
 		// Enable Sessions (optional)
 		'Session',
 
-    	// Enable authentication
+		// Enable authentication
 		'Auth' => array(
 			'authorize' => array(
 				'Controller'
@@ -180,7 +190,7 @@ abstract class AppController extends Controller {
 		'Crud.Crud' => array(
 			'actions' => array('index', 'add', 'edit', 'view', 'delete')
 		),
-    );
+	);
 }
 ?>
 ```
