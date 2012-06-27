@@ -14,8 +14,8 @@ if (isset($this->Paginator) && $this->Paginator->defaultModel()) {
 
 	$pagination = array(
 		'pageCount' => $_pagination['pageCount'],
-		'current'   => $_pagination['page'],
-		'count' 	=> $_pagination['count']
+		'current' => $_pagination['page'],
+		'count' => $_pagination['count']
 	);
 
 	if ($this->Paginator->hasPrev()) {
@@ -47,7 +47,11 @@ if (class_exists('ConnectionManager') && Configure::read('debug') > 1) {
 $out = json_encode(compact('success', 'data', 'pagination', 'queryLog'));
 
 if (Configure::read('debug')) {
-	echo $this->JsonFormat->format($out);
+	$out = $this->JsonFormat->format($out);
+}
+
+if ($allowJsonp && !empty($this->params->query['callback'])) {
+	printf('%s(%s)', $this->params->query['callback'], $out);
 } else {
 	echo $out;
 }
