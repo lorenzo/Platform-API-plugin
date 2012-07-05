@@ -110,7 +110,7 @@ class TokenAuthenticate extends BaseAuthenticate {
 	 *
 	 * @return array
 	 */
-	public function logout() {
+	public function logout($user) {
 		return '/';
 	}
 }
