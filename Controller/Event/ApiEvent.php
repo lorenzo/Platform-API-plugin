@@ -70,16 +70,14 @@ class ApiEvent extends CrudBaseEvent {
 			$response->header('Location', \Router::url(array('action' => 'view', $event->subject->id), true));
 		}
 
-		$response->send();
-		$this->_stop();
+		$event->stopPropagation();
+		return $response;
 	}
 
 	public function afterDelete(CakeEvent $event) {
 		$event->subject->controller->set('success', $event->subject->success);
-
-		$response = $event->subject->controller->render();
-		$response->send();
-		$this->_stop();
+		$event->stopPropagation();
+		return $event->subject->controller->render();
 	}
 
 	public function recordNotFound(CakeEvent $event) {
